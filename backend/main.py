@@ -1,10 +1,11 @@
+from typing import List
+
 import fastapi as _fastapi
-
 import fastapi.security as _security
-
 import sqlalchemy.orm as _orm
 
-import services as _services, schemas as _schemas
+import schemas as _schemas
+import services as _services
 
 app = _fastapi.FastAPI()
 
@@ -39,6 +40,61 @@ async def generate_token(
     return await _services.create_token(user)
 
 
-@app.get('/api/users/me', response_model=_schemas.User)
+@app.get("/api/users/me", response_model=_schemas.User)
 async def get_user(user: _schemas.User = _fastapi.Depends(_services.get_current_user)):
     return user
+
+
+@app.post("/api/leads", response_model=_schemas.Lead)
+async def create_lead(
+    lead: _schemas.LeadCreate,
+    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+):
+    return await _services.create_lead(lead=lead, user=user, db=db)
+
+
+# @app.put("/api/leads/{lead_id}", response_model=_schemas.User)
+# # function to update lead
+
+
+@app.get("/api/leads", response_model=List[_schemas.Lead])
+async def get_leads(
+    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+):
+    return await _services.get_leads(user, db)
+
+
+@app.get("/api/leads/{lead_id}", response_model=_schemas.Lead)
+async def get_lead(
+    lead_id: int,
+    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+):
+    lead = await _services.get_lead(lead_id=lead_id, user=user, db=db)
+    return lead
+
+
+@app.delete("/api/leads/{lead_id}")
+async def delete_lead(
+    lead_id: int,
+    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+):
+    lead = await _services.get_lead(lead_id=lead_id, user=user, db=db)
+    return await _services.delete_lead(lead_id=lead_id, user=user, db=db)
+
+
+@app.put("/api/leads/{lead_id}", response_model=_schemas.Lead)
+async def update_lead(
+    lead_id: int,
+    lead: _schemas.LeadCreate,
+    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+):
+    return await _services.update_lead(lead_id=lead_id, lead=lead, user=user, db=db)
+
+@app.get('/')
+async def root():
+    return {'message': 'All good'}
