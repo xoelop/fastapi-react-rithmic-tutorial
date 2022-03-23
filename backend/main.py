@@ -7,7 +7,24 @@ import sqlalchemy.orm as _orm
 import schemas as _schemas
 import services as _services
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 app = _fastapi.FastAPI()
+
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:8080",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 @app.post("/api/users")
@@ -20,7 +37,9 @@ async def create_user(
             status_code=_fastapi.status.HTTP_400_BAD_REQUEST,
             detail="Email already registered",
         )
-    return await _services.create_user(user, db)
+    user =  await _services.create_user(user, db)
+    
+    return await _services.create_token(user)
 
 
 @app.post("/api/token")
@@ -95,6 +114,6 @@ async def update_lead(
 ):
     return await _services.update_lead(lead_id=lead_id, lead=lead, user=user, db=db)
 
-@app.get('/')
+@app.get('/api')
 async def root():
-    return {'message': 'All good'}
+    return {'message': 'Awesome Leads Manager'}
