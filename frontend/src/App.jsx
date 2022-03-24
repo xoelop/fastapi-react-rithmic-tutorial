@@ -3,6 +3,9 @@ import React, { useContext, useEffect, useState } from "react";
 import Register from "./components/Register";
 import Header from "./components/Header";
 import { UserContext } from "./context/UserContext";
+import Table from "./components/Table";
+
+import Login from "./components/Login";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -39,14 +42,13 @@ const App = () => {
       <Header title={message} />
       <div className="columns">
         <div className="column"></div>
-        <div className="column md-5 is-two_thirds">
+        <div className="column m-5 is-two-thirds">
           {!token ? (
             <div className="columns">
-              <Register />
-              <p>Login</p>
+              <Register /> <Login />
             </div>
           ) : (
-            <p>Table</p>
+            <Table />
           )}
         </div>
         <div className="column"></div>
@@ -54,5 +56,6 @@ const App = () => {
     </>
   );
 };
+
 
 export default App;
