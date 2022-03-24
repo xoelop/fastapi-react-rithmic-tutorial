@@ -1,1 +1,1 @@
-Project to learn React, based on https://www.youtube.com/watch?v=NeKm4zOVkO4&list=PLhH3UpV2flrwfJ2aSwn8MkCKz9VzO-1P4&index=4
+Following this tutorial https://www.youtube.com/watch?v=NeKm4zOVkO4&list=PLhH3UpV2flrwfJ2aSwn8MkCKz9VzO-1P4&index=4
